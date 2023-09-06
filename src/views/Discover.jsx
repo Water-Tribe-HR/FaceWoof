@@ -6,10 +6,8 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { FaDog, FaBone } from 'react-icons/fa';
 import axios from 'axios';
-import { useOktaAuth } from '@okta/okta-react';
 import CardStack from '../components/Discover/CardStack';
 import useUserContext from '../hooks/useUserContext';
 import useUserLocation from '../hooks/useUserLocation';

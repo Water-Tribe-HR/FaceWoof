@@ -3,11 +3,11 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const db = new Client({
-  user: process.env.PGUSERNAME,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT
+  user: process.env.VITE_PGUSERNAME,
+  host: process.env.VITE_PGHOST,
+  database: process.env.VITE_PGDATABASE,
+  password: process.env.VITE_PGPASSWORD,
+  port: process.env.VITE_PGPORT
 });
 
 module.exports = db;

@@ -1,37 +1,48 @@
-/* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { useOktaAuth } from '@okta/okta-react';
 import { FaDog } from 'react-icons/fa';
-import OktaSignInWidget from '../components/Login/OktaSignInWidget';
-import useAuth from '../hooks/useAuth';
 import dogImage from '../assets/dog.jpg';
 import '../components/Login/Login.css';
-import '../components/oktaWidget/css/okta-sign-in.min.css';
+import { useHistory } from 'react-router-dom';
+import useUserContext from '../hooks/useUserContext';
+import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
 const Login = ({ config }) => {
-  const { oktaAuth, authState } = useOktaAuth();
-  const onSuccess = (tokens) => {
-    oktaAuth.handleLoginRedirect(tokens);
-  };
+  const { setUserData, setUserId, setFirstLogin } = useUserContext();
+  const history = useHistory();
 
-  const { loading, checkAuth } = useAuth();
-
-  useEffect(() => {
-    checkAuth();
-  }, [authState, oktaAuth]); // says setLoggedIn is missing from deps but it shouldn't be
-
-  const onError = (err) => {
-    console.log('Sign in error', err);
-  };
+  axios
+    .put('/api/authuser', { email: 'pyekel6@marketwatch.com', name: 'Abdel Dandie' })
+    .then((res) => {
+      const user = {
+        user_id: res.data.user_id,
+        dog_name: res.data.dog_name,
+        owner_name: res.data.owner_name,
+        owner_first_name: 'Abdel',
+        owner_last_name: 'Dandie',
+        dog_breed: res.data.dog_breed,
+        age: res.data.age,
+        vaccination: res.data.vaccination,
+        discoverable: res.data.discoverable,
+        owner_email: res.data.owner_email,
+        location: res.data.location,
+        likes_one: res.data.likes_one,
+        likes_two: res.data.likes_two,
+        likes_three: res.data.likes_three
+      };
+      setUserId(res.data.user_id);
+      setUserData(user);
+      setFirstLogin(false);
+      history.push('/discover');
+    });
 
   return (
     <div className="flex h-screen w-screen">
-       <div className="relative w-[600px]">
-         <Link
-             to="/"
-             className="absolute top-4 left-4 border border-0 px-12 py-2 bg-[#8d5426] rounded text-white"
+      <div className="relative w-[600px]">
+        <Link
+          to="/"
+          className="absolute top-4 left-4 border border-0 px-12 py-2 bg-[#8d5426] rounded text-white"
         >
           Diggr
         </Link>
@@ -39,18 +50,17 @@ const Login = ({ config }) => {
         <img className="w-full h-full" src={dogImage} alt="dog-image" />
       </div>
       <div
-          className="flex flex-col space-y-5 px-12 items-center justify-center"
-          style={{ width: `--webkit-calc(100% - 600px)` }}
+        className="flex flex-col space-y-5 px-12 items-center justify-center"
+        style={{ width: `--webkit-calc(100% - 600px)` }}
       >
-        {
-          loading ? (
-            <div className="loading-discover items-center justify-center">
-              <FaDog className="loading-dog1" />
-              <FaDog className="loading-dog2" />
-            </div>
-          ) : <OktaSignInWidget config={config} onSuccess={onSuccess} onError={onError} />
-        }
-
+        {true ? (
+          <div className="loading-discover items-center justify-center">
+            <FaDog className="loading-dog1" />
+            <FaDog className="loading-dog2" />
+          </div>
+        ) : (
+          <div>Here's where the login widget goes</div>
+        )}
       </div>
     </div>
   );
